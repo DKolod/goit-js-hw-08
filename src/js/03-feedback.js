@@ -1,1 +1,40 @@
+import throttle from 'lodash.throttle';
+
+const STORAGE_KEY = 'feedback-form-state';
+const formEl = document.querySelector('form');
+const textareaEl = document.querySelector("textarea[name = 'message']");
+const inputEl = document.querySelector("input[name = 'email']");
+
+formEl.addEventListener('input', throttle(setDataToStorage, 500));
+formEl.addEventListener('submit', actionsOnSubmit);
+
+
+
+function setDataToStorage(evt) {
+  const email = formEl.elements.email.value;
+  const message = formEl.elements.message.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, message }));
+};
+
+function actionsOnSubmit(evt) {
+  evt.preventDefault();
+  if (inputEl.value === '' || textareaEl.value === ''){
+    return alert('My dear friend, please fill in all the fields!');
+  }
+  evt.target.reset();
+  localStorage.removeItem(STORAGE_KEY);
+};
+
+getDataFromStorage();
+
+function getDataFromStorage() {
+  const dataFromStorage = localStorage.getItem(STORAGE_KEY);
+  const parsedData = JSON.parse(dataFromStorage);
+
+  if (dataFromStorage) {
+    inputEl.value = parsedData.email || '';
+    textareaEl.value = parsedData.message || '';
+  }
+};
+
 
